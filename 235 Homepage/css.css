@@ -1,0 +1,293 @@
+/* Inspiration: https://github.com/Saltssaumure/pios-text-editor */
+
+@font-face {
+    font-family: "PerfectDOS";
+    src: url("https://static.tumblr.com/6nmlfta/kInq29swf/perfect_dos_vga_437_win.ttf");
+}
+
+:root {
+    --dullRed: rgb(180, 0, 40);
+    --brightRed: rgb(255, 20, 20);
+    --userGrey: rgb(200, 200, 200);
+    --greyGlow: 0 0 5px rgba(200, 200, 200, 0.6);
+    --greyColour: rgb(150,150,150);
+    --redGlow: 0 0 10px var(--brightRed), 0 0 20px var(--brightRed), 0 0 30px var(--brightRed);
+    --whiteGlow: 0 0 5px rgba(255,255,255,0.7), 0 0 10px white;
+    --crt-opacity: 0.15;
+}
+
+::selection {
+    background: var(--brightRed);
+    color: white;
+    text-shadow: var(--redGlow);
+}
+
+body {
+    position: relative;
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: black;
+    color: white;
+    font-family: "PerfectDOS", Consolas, monospace;
+    font-size: 36px;
+    letter-spacing: -2px;
+    text-shadow: var(--whiteGlow);
+    overflow: hidden;
+}
+
+@keyframes crtFlicker {
+    0%   { opacity: 0.12; background-position: 0 0; }
+    5%   { opacity: 0.15; }
+    10%  { opacity: 0.12; }
+    15%  { opacity: 0.16; background-position: 0 1px; }
+    20%  { opacity: 0.13; }
+    100% { opacity: 0.12; background-position: 0 0; }
+}
+
+body::after {
+    content: " ";
+    position: fixed;
+    top: 0; left: 0; bottom: 0; right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+    linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    background-size: 100% 3px, 3px 100%;
+    z-index: 9998;
+    pointer-events: none;
+    animation: crtFlicker 4s infinite alternate;
+}
+
+@keyframes rollScanline {
+    0% { background-position: 0 -15vh; }
+    100% { background-position: 0 115vh; }
+}
+
+body::before {
+    content: " ";
+    display: block;
+    position: fixed;
+    top: 0; left: 0; bottom: 0; right: 0;
+    background: linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0) 0%,
+                                rgba(255, 255, 255, 0.03) 10%,
+                                rgba(0, 0, 0, 0.15) 50%,
+                                rgba(255, 255, 255, 0.03) 90%,
+                                rgba(255, 255, 255, 0) 100%
+    );
+    background-size: 100% 12vh;
+    background-repeat: no-repeat;
+    pointer-events: none;
+    z-index: 9999;
+    animation: rollScanline 7s linear infinite;
+}
+
+div, p, header, footer, section, article, blockquote {
+    border: 2px solid white;
+    box-shadow: 0 0 5px white, inset 0 0 5px white;
+    margin: 10px;
+    padding: 10px;
+    border-radius: 0;
+}
+
+a {
+    color: var(--brightRed) !important;
+    text-shadow: var(--redGlow) !important;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+@keyframes wipeDown {
+    0% { clip-path: polygon(-20% -20%, 120% -20%, 120% -20%, -20% -20%); }
+    100% { clip-path: polygon(-20% -20%, 120% -20%, 120% 120%, -20% 120%); }
+}
+
+div#container {
+    position: fixed;
+    top: 30px;
+    bottom: 30px;
+    border: 3px solid white;
+    border-radius: 0;
+    box-shadow: var(--whiteGlow), inset 0 0 30px rgba(255,255,255,0.1);
+    width: 80vw;
+    padding-top: 20px;
+    overflow-y: auto;
+}
+
+div#container > * {
+    animation: wipeDown 1.5s ease-out forwards;
+}
+
+img {
+    animation: wipeDown 2.5s steps(40) forwards;
+    filter: sepia(0.2) hue-rotate(2deg) contrast(1.5) brightness(0.9);
+    display: block;
+    max-width: 100%;
+    border-radius: 0;
+}
+
+#container::-webkit-scrollbar {
+width: 24px;
+display: block;
+}
+
+#container::-webkit-scrollbar-track {
+background: transparent;
+border: 2px solid white;
+border-right: none;
+border-radius: 0;
+box-shadow: var(--whiteGlow);
+}
+
+#container::-webkit-scrollbar-thumb {
+background-color: transparent;
+background-image:
+radial-gradient(circle at center, rgba(255,255,255,0.8) 0%, transparent 60%),
+linear-gradient(white, white);
+background-size: 32px 32px, 14px 14px;
+background-position: center;
+background-repeat: no-repeat;
+border: none;
+border-radius: 0;
+box-shadow: none;
+}
+
+div.name.title {
+    position: fixed;
+    top: 18px;
+    text-shadow: var(--whiteGlow);
+    overflow: visible;
+    z-index: 10000;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border-radius: 0;
+}
+
+div.options {
+    position: fixed;
+    bottom: 10px;
+    margin: 0;
+    text-decoration: none;
+    border: none !important;
+    box-shadow: none !important;
+    z-index: 10000;
+}
+
+div.options.left { left: 20px; }
+div.options.right { right: 20px; }
+div.options p { cursor: pointer; border: none !important; box-shadow: none !important; padding: 0 !important; margin: 0 !important; border-radius: 0; }
+
+div#helpful {
+    position: fixed;
+    left: 60px;
+    bottom: 10px;
+    width: 600px;
+    max-width: 80vw;
+    padding: 0 20px;
+    z-index: 10;
+    background: black;
+    display: none;
+    font-size: 24px;
+    border-radius: 0;
+}
+
+div#helpful ul { list-style-type: square; }
+div#helpful > p { text-align: center; border: none !important; box-shadow: none !important; border-radius: 0; }
+
+div.chat {
+    position: relative;
+    margin: 40px auto !important;
+    min-width: 10%;
+    width: fit-content;
+    max-width: 70%;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    border-radius: 0;
+}
+
+div.chat.left { margin-left: 34px !important; }
+div.chat.right { margin-right: 34px !important; }
+div.chat#kazz, div.chat#system { display: none; }
+
+.remove {
+    position: absolute;
+    left: -25px;
+    top: -3px;
+    text-transform: none;
+    cursor: pointer;
+}
+
+div.name {
+    padding: 0 10px !important;
+    max-width: 700px;
+    z-index: 10001;
+    background: black !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    line-height: 1 !important;
+    border-radius: 0;
+}
+
+.chat div.name {
+    position: absolute;
+    top: -18px !important;
+    left: 20px;
+}
+
+div.frame {
+    padding-top: 25px !important;
+    border-radius: 0;
+}
+
+div.text {
+    position: relative;
+    z-index: 2;
+    padding: 0 30px 22px 30px !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    border-radius: 0;
+}
+
+div.text:focus, div.name:focus { outline: none; }
+
+.kazz div.name {
+    color: var(--userGrey);
+    text-shadow: var(--greyGlow);
+}
+.kazz div.frame {
+    border-color: var(--userGrey);
+    color: var(--userGrey);
+    text-shadow: var(--greyGlow);
+}
+
+.system { text-transform: uppercase; }
+.system div.name {
+    color: var(--brightRed);
+    text-shadow: var(--redGlow);
+}
+.system div.frame {
+    border-color: var(--brightRed);
+}
+.system div.text, .addsystem {
+    color: var(--brightRed);
+    text-shadow: var(--redGlow);
+}
+
+.image-row {
+    display: flex;
+    gap: 15px;
+}
+
+.image-row img {
+    flex: 1;
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
