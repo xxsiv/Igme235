@@ -1,4 +1,14 @@
 /* Inspiration: https://github.com/Saltssaumure/pios-text-editor */
+/* Universal reset to prevent padding/borders from causing width overflows */
+*, *::before, *::after {
+    box-sizing: border-box;
+    overflow-wrap: break-word;
+}
+
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
 
 @font-face {
     font-family: "PerfectDOS";
@@ -9,10 +19,10 @@
     --dullRed: rgb(180, 0, 40);
     --brightRed: rgb(255, 20, 20);
     --userGrey: rgb(200, 200, 200);
-    --greyGlow: 0 0 5px rgba(200, 200, 200, 0.6);
+    --greyGlow: 0 0 0.32vw rgba(200, 200, 200, 0.6);
     --greyColour: rgb(150,150,150);
-    --redGlow: 0 0 10px var(--brightRed), 0 0 20px var(--brightRed), 0 0 30px var(--brightRed);
-    --whiteGlow: 0 0 5px rgba(255,255,255,0.7), 0 0 10px white;
+    --redGlow: 0 0 0.64vw var(--brightRed), 0 0 1.28vw var(--brightRed), 0 0 1.92vw var(--brightRed);
+    --whiteGlow: 0 0 0.32vw rgba(255,255,255,0.7), 0 0 0.64vw white;
     --crt-opacity: 0.15;
 }
 
@@ -32,8 +42,8 @@ body {
     background: black;
     color: white;
     font-family: "PerfectDOS", Consolas, monospace;
-    font-size: 36px;
-    letter-spacing: -2px;
+    font-size: 2vw;
+    letter-spacing: -0.08vw;
     text-shadow: var(--whiteGlow);
     overflow: hidden;
 }
@@ -42,7 +52,7 @@ body {
     0%   { opacity: 0.12; background-position: 0 0; }
     5%   { opacity: 0.15; }
     10%  { opacity: 0.12; }
-    15%  { opacity: 0.16; background-position: 0 1px; }
+    15%  { opacity: 0.16; background-position: 0 0.08vw; }
     20%  { opacity: 0.13; }
     100% { opacity: 0.12; background-position: 0 0; }
 }
@@ -53,7 +63,7 @@ body::after {
     top: 0; left: 0; bottom: 0; right: 0;
     background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
     linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-    background-size: 100% 3px, 3px 100%;
+    background-size: 100% 0.24vh, 0.24vw 100%;
     z-index: 9998;
     pointer-events: none;
     animation: crtFlicker 4s infinite alternate;
@@ -85,11 +95,16 @@ body::before {
 }
 
 div, p, header, footer, section, article, blockquote {
-    border: 2px solid white;
-    box-shadow: 0 0 5px white, inset 0 0 5px white;
-    margin: 10px;
-    padding: 10px;
+    border: 0.12vw solid white;
+    box-shadow: 0 0 0.32vw white, inset 0 0 0.32vw white;
+    margin: 0.64vw;
+    padding: 0.64vw;
     border-radius: 0;
+}
+
+h1 {
+    text-align: center;
+    margin: 0.64vw;
 }
 
 a {
@@ -106,14 +121,15 @@ a {
 
 div#container {
     position: fixed;
-    top: 30px;
-    bottom: 30px;
-    border: 3px solid white;
+    top: 4vh;
+    bottom: 4vh;
+    border: 0.2vw solid white;
     border-radius: 0;
-    box-shadow: var(--whiteGlow), inset 0 0 30px rgba(255,255,255,0.1);
+    box-shadow: var(--whiteGlow), inset 0 0 1.76vw rgba(255,255,255,0.1);
     width: 80vw;
-    padding-top: 20px;
+    padding-top: 1.6vh;
     overflow-y: auto;
+    overflow-x: hidden;
 }
 
 div#container > * {
@@ -124,18 +140,22 @@ img {
     animation: wipeDown 2.5s steps(40) forwards;
     filter: sepia(0.2) hue-rotate(2deg) contrast(1.5) brightness(0.9);
     display: block;
+    width: 100%;
+    height: auto;
     max-width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
     border-radius: 0;
 }
 
 #container::-webkit-scrollbar {
-width: 24px;
+width: 1.28vw;
 display: block;
 }
 
 #container::-webkit-scrollbar-track {
 background: transparent;
-border: 2px solid white;
+border: 0.12vw solid white;
 border-right: none;
 border-radius: 0;
 box-shadow: var(--whiteGlow);
@@ -146,7 +166,7 @@ background-color: transparent;
 background-image:
 radial-gradient(circle at center, rgba(255,255,255,0.8) 0%, transparent 60%),
 linear-gradient(white, white);
-background-size: 32px 32px, 14px 14px;
+background-size: 1.76vw 1.76vw, 0.64vw 0.64vw;
 background-position: center;
 background-repeat: no-repeat;
 border: none;
@@ -156,7 +176,8 @@ box-shadow: none;
 
 div.name.title {
     position: fixed;
-    top: 18px;
+    top: 2vh;
+    font-size: 2.2vw;
     text-shadow: var(--whiteGlow);
     overflow: visible;
     z-index: 10000;
@@ -169,7 +190,7 @@ div.name.title {
 
 div.options {
     position: fixed;
-    bottom: 10px;
+    bottom: 1.2vh;
     margin: 0;
     text-decoration: none;
     border: none !important;
@@ -177,21 +198,21 @@ div.options {
     z-index: 10000;
 }
 
-div.options.left { left: 20px; }
-div.options.right { right: 20px; }
+div.options.left { left: 1.28vw; }
+div.options.right { right: 1.28vw; }
 div.options p { cursor: pointer; border: none !important; box-shadow: none !important; padding: 0 !important; margin: 0 !important; border-radius: 0; }
 
 div#helpful {
     position: fixed;
-    left: 60px;
-    bottom: 10px;
-    width: 600px;
-    max-width: 80vw;
-    padding: 0 20px;
+    left: 3.2vw;
+    bottom: 1.2vh;
+    width: 85vw;
+    max-width: 85vw;
+    padding: 0 1.28vw;
     z-index: 10;
     background: black;
     display: none;
-    font-size: 24px;
+    font-size: 1.6vw;
     border-radius: 0;
 }
 
@@ -200,55 +221,56 @@ div#helpful > p { text-align: center; border: none !important; box-shadow: none 
 
 div.chat {
     position: relative;
-    margin: 40px auto !important;
+    margin: 2.24vh auto !important;
     min-width: 10%;
     width: fit-content;
-    max-width: 70%;
+    max-width: 90%;
     border: none !important;
     box-shadow: none !important;
     padding: 0 !important;
     border-radius: 0;
 }
 
-div.chat.left { margin-left: 34px !important; }
-div.chat.right { margin-right: 34px !important; }
+div.chat.left { margin-left: 2.24vw !important; }
+div.chat.right { margin-right: 2.24vw !important; }
 div.chat#kazz, div.chat#system { display: none; }
 
 .remove {
     position: absolute;
-    left: -25px;
-    top: -3px;
+    left: -1.6vw;
+    top: -0.32vh;
     text-transform: none;
     cursor: pointer;
 }
 
 div.name {
-    padding: 0 10px !important;
-    max-width: 700px;
+    padding: 0 0.64vw !important;
+    max-width: 80vw;
     z-index: 10001;
     background: black !important;
     border: none !important;
     box-shadow: none !important;
     margin: 0 !important;
     line-height: 1 !important;
+    font-size: 1.6vw !important;
     border-radius: 0;
 }
 
 .chat div.name {
     position: absolute;
-    top: -18px !important;
-    left: 20px;
+    top: -1.12vh !important;
+    left: 1.28vw;
 }
 
 div.frame {
-    padding-top: 25px !important;
+    padding-top: 1.6vh !important;
     border-radius: 0;
 }
 
 div.text {
     position: relative;
     z-index: 2;
-    padding: 0 30px 22px 30px !important;
+    padding: 0 1.76vw 1.28vh 1.76vw !important;
     border: none !important;
     box-shadow: none !important;
     margin: 0 !important;
@@ -273,7 +295,8 @@ div.text:focus, div.name:focus { outline: none; }
     text-shadow: var(--redGlow);
 }
 .system div.frame {
-    border-color: var(--brightRed);
+    border-color: var(--brightRed) !important;
+    box-shadow: 0 0 0.32vw var(--brightRed), inset 0 0 0.32vw var(--brightRed) !important;
 }
 .system div.text, .addsystem {
     color: var(--brightRed);
@@ -282,12 +305,16 @@ div.text:focus, div.name:focus { outline: none; }
 
 .image-row {
     display: flex;
-    gap: 15px;
+    gap: 0.88vw;
+    flex-wrap: nowrap; /* Forces images to stay lined up in a single row */
+    width: 100%;
 }
 
 .image-row img {
-    flex: 1;
+    flex: 1; /* Distributes horizontal space evenly among the images */
+    min-width: 0; /* Allows images to shrink below their intrinsic size if necessary */
     width: 100%;
-    height: 400px;
+    height: auto;
+    aspect-ratio: 1 / 1;
     object-fit: cover;
 }
